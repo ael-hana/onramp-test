@@ -5,7 +5,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppConfigService } from './config/app-config.service';
 import { StripePaymentService } from './services/stripe-payment.service';
+import { OnRampService } from './services/onramp.service';
 import { PaymentController } from './controllers/payment.controller';
+import { OnRampController } from './controllers/onramp.controller';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 
 @Module({
@@ -15,11 +17,12 @@ import { GlobalExceptionFilter } from './filters/global-exception.filter';
       envFilePath: '.env',
     }),
   ],
-  controllers: [AppController, PaymentController],
+  controllers: [AppController, PaymentController, OnRampController],
   providers: [
     AppService,
     AppConfigService,
     StripePaymentService,
+    OnRampService, // Orchestrateur OnRamp
     {
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
