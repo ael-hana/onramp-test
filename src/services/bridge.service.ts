@@ -61,7 +61,7 @@ export class BridgeService {
         },
       };
 
-      this.logger.log('Requête Bridge /transfers', transferRequest);
+      this.logger.log('Requête Bridge /transfers');
 
       // Générer une clé d'idempotence unique
       const idempotencyKey = `onramp_${paymentIntentId}_${Date.now()}`;
@@ -86,9 +86,6 @@ export class BridgeService {
       this.logger.log(`Transfert Bridge créé: ${bridgeData.id}`, {
         status: bridgeData.state,
       });
-
-      // print response
-      this.logger.debug('Réponse complète Bridge:', bridgeData);
 
       const bridgeTransaction: BridgeTransaction = {
         id: bridgeData.id,
