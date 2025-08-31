@@ -1,24 +1,29 @@
 // Constantes métier OnRamp
+import { OnRampStatus } from '../enums/onramp.enums';
+
 export const ONRAMP_CONFIG = {
   TRANSACTION_EXPIRY_HOURS: 24,
   MIN_AMOUNT_EUR: 1,
   MAX_AMOUNT_EUR: 50000, // Limite OnRamp plus élevée que Stripe
-  DEFAULT_CURRENCY: 'EUR',
+  SOURCE_CURRENCY: 'EUR',
   TARGET_CURRENCY: 'USDC',
 
   // Configuration des phases
-  TOTAL_PHASES: 3,
+  TOTAL_PHASES: 4,
 } as const;
 
 // Messages OnRamp métier
 export const ONRAMP_MESSAGES = {
-  TRANSACTION_INITIATED: 'Transaction OnRamp initiée avec succès',
+  ONRAMP_INITIATED: 'Transaction OnRamp initiée avec succès',
   PAYMENT_PENDING: 'En attente du paiement par carte',
   PAYMENT_CONFIRMED: 'Paiement confirmé, préparation de la conversion crypto',
-  CONVERSION_PENDING: 'Conversion EUR vers USDC en cours',
+  CONVERSION_INITIATED: 'Initiation de la conversion EUR vers USDC',
+  CONVERSION_PENDING: 'Conversion EUR vers USDC en attente',
+  CONVERSION_IN_PROGRESS: 'Conversion EUR vers USDC en cours',
   CONVERSION_COMPLETED: 'Conversion crypto terminée',
+  TRANSFER_INITIATED: 'Initiation du transfert vers votre wallet',
   TRANSFER_PENDING: 'Transfert vers votre wallet en cours',
-  TRANSFER_CONFIRMED: 'Transfert confirmé sur la blockchain',
+  TRANSFER_COMPLETED: 'Transfert confirmé sur la blockchain',
   COMPLETED: 'Transaction OnRamp terminée avec succès',
 
   // Messages d'erreur
@@ -30,13 +35,15 @@ export const ONRAMP_MESSAGES = {
 // Configuration de progression
 export const PROGRESS_CONFIG = {
   STEPS: {
-    INITIATED: { step: 1, percentage: 10 },
-    PAYMENT_PENDING: { step: 2, percentage: 20 },
-    PAYMENT_CONFIRMED: { step: 3, percentage: 40 },
-    CRYPTO_CONVERSION_PENDING: { step: 4, percentage: 60 },
-    CRYPTO_CONVERTED: { step: 5, percentage: 80 },
-    WALLET_TRANSFER_PENDING: { step: 6, percentage: 90 },
-    COMPLETED: { step: 7, percentage: 100 },
+    [OnRampStatus.INITIATED]: { step: 1, percentage: 10 },
+    [OnRampStatus.PAYMENT_PENDING]: { step: 2, percentage: 20 },
+    [OnRampStatus.PAYMENT_CONFIRMED]: { step: 3, percentage: 30 },
+    [OnRampStatus.CONVERSION_PENDING]: { step: 4, percentage: 40 },
+    [OnRampStatus.CONVERSION_IN_PROGRESS]: { step: 5, percentage: 60 },
+    [OnRampStatus.CRYPTO_CONVERTED]: { step: 6, percentage: 70 },
+    [OnRampStatus.TRANSFER_PENDING]: { step: 7, percentage: 80 },
+    [OnRampStatus.WALLET_TRANSFER_CONFIRMED]: { step: 8, percentage: 90 },
+    [OnRampStatus.COMPLETED]: { step: 9, percentage: 100 },
   },
-  TOTAL_STEPS: 7,
+  TOTAL_STEPS: 9,
 } as const;

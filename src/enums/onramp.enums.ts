@@ -7,12 +7,13 @@ export enum OnRampStatus {
   PAYMENT_PENDING = 'payment_pending', // En attente du paiement client
   PAYMENT_CONFIRMED = 'payment_confirmed', // Paiement Stripe réussi
 
-  // Phase conversion crypto (Bridge) - pour plus tard
-  CRYPTO_CONVERSION_PENDING = 'crypto_conversion_pending', // Conversion EUR→USDC en cours
+  // Phase conversion crypto (Bridge)
+  CONVERSION_PENDING = 'conversion_pending', // Conversion EUR→USDC en attente
+  CONVERSION_IN_PROGRESS = 'conversion_in_progress', // Conversion EUR→USDC en cours
   CRYPTO_CONVERTED = 'crypto_converted', // Conversion terminée
 
   // Phase transfert wallet
-  WALLET_TRANSFER_PENDING = 'wallet_transfer_pending', // Transfert vers wallet en cours
+  TRANSFER_PENDING = 'transfer_pending', // Transfert vers wallet en cours
   WALLET_TRANSFER_CONFIRMED = 'wallet_transfer_confirmed', // Transfert confirmé on-chain
 
   // Statuts finaux
@@ -23,8 +24,10 @@ export enum OnRampStatus {
 
 // Enum pour les phases du processus OnRamp
 export enum OnRampPhase {
-  PAYMENT = 'payment',
+  PAYMENT_AUTHORIZATION = 'payment_authorization', // Autorisation du paiement
+  PAYMENT = 'payment', // Paiement confirmé
   CRYPTO_CONVERSION = 'crypto_conversion', // Phase Bridge
+  BLOCKCHAIN_TRANSFER = 'blockchain_transfer', // Phase transfert blockchain
   WALLET_TRANSFER = 'wallet_transfer', // Phase transfert final
   COMPLETED = 'completed', // Terminé
 }

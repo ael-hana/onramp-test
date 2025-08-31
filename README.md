@@ -1,98 +1,259 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# OnRamp Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 📖 Description
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Proof-of-concept d'une API OnRamp permettant à des marchands français de recevoir des paiements par carte bancaire (EUR) via Stripe et de les convertir automatiquement en stablecoins USDC via Bridge, avec transfert vers un portefeuille crypto.
 
-## Description
+### 🎯 Contexte Business
+- Marchands français vendant en ligne à des clients français
+- Paiements reçus en EUR via carte bancaire (Stripe)
+- Conversion automatique EUR → USDC via Bridge
+- Transfert vers un portefeuille crypto prédéfini
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🏗️ Architecture
 
-## Project setup
+### Design Provider-Agnostic
+L'architecture permet de remplacer facilement Stripe ou Bridge par d'autres providers :
+- **Interfaces abstraites** pour les services de paiement et conversion
+- **Services modulaires** avec injection de dépendances
+- **Types TypeScript stricts** pour la type-safety
+- **Gestion d'erreurs centralisée** avec codes spécifiques
 
+### Stack Technique
+- **Runtime**: Node.js avec TypeScript
+- **Framework**: NestJS
+- **Validation**: Joi schemas
+- **Paiements**: Stripe API
+- **Conversion crypto**: Bridge API
+
+## 🚀 Installation et Configuration
+
+### 1. Prérequis
 ```bash
-$ npm install
+node >= 18
+npm >= 9
 ```
 
-## Compile and run the project
-
+### 2. Installation
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone <repository>
+cd onramp-backend
+npm install
 ```
 
-## Run tests
+### 3. Variables d'environnement
+Créez un fichier `.env` avec les clés sandbox :
 
 ```bash
-# unit tests
-$ npm run test
+# Stripe (Sandbox)
+STRIPE_PUBLIC_KEY=pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxx
+STRIPE_PRIVATE_KEY=sk_test_pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxx
 
-# e2e tests
-$ npm run test:e2e
+# Bridge (Sandbox)
+BRIDGE_API_KEY=sk-test-pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxx
+BRIDGE_BASE_URL=https://api.sandbox.bridge.xyz/v0
 
-# test coverage
-$ npm run test:cov
+# Wallet de destination
+WALLET_ADDRESS=0x2B480c63bDe7C764cadBaA8b181405D770728128
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### 4. Démarrage
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Mode développement avec watch
+npm run start:dev
+
+# Mode production
+npm run start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+L'API sera disponible sur `http://localhost:3000`
 
-## Resources
+## 🔄 Flow OnRamp Complet
 
-Check out a few resources that may come in handy when working with NestJS:
+### Étapes du processus
+1. **Initiation** : Création du Payment Intent Stripe + transaction OnRamp
+2. **Paiement** : Confirmation du paiement par carte via Stripe
+3. **Conversion** : Initiation de la conversion EUR → USDC via Bridge
+4. **Transfert** : Envoi des USDC vers le portefeuille de destination
+5. **Confirmation** : Finalisation sur la blockchain
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Statuts trackés
+- `payment_pending` → `conversion_pending` → `conversion_in_progress` → `transfer_pending` → `completed`
 
-## Support
+## 📡 API Endpoints
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### OnRamp Operations
 
-## Stay in touch
+#### `POST /onramp/initiate`
+Initie une nouvelle transaction OnRamp
+```bash
+curl -X POST http://localhost:3000/onramp/initiate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 100,
+    "description": "Test OnRamp"
+  }'
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+#### `GET /onramp/transactions`
+Liste toutes les transactions
+```bash
+curl -X GET http://localhost:3000/onramp/transactions
+```
 
-## License
+#### `GET /onramp/status/{transactionId}`
+Récupère le statut d'une transaction
+```bash
+curl -X GET http://localhost:3000/onramp/status/onramp_1234567890_abc123def
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+#### `POST /onramp/process-payment/{paymentIntentId}`
+Traite la confirmation de paiement et lance la conversion
+```bash
+curl -X POST http://localhost:3000/onramp/process-payment/pi_3S1234567890
+```
+
+### Payment Operations (Stripe)
+
+#### `POST /payment/confirm/{paymentIntentId}`
+Simule la confirmation d'un paiement (sandbox uniquement)
+```bash
+curl -X POST http://localhost:3000/payment/confirm/pi_3S1234567890
+```
+
+#### `GET /payment/status/{paymentIntentId}`
+Vérifie le statut d'un paiement Stripe
+```bash
+curl -X GET http://localhost:3000/payment/status/pi_3S1234567890
+```
+
+## 🧪 Démonstration Complète
+
+### Scénario de test complet
+
+#### 1. Initier un OnRamp
+```bash
+curl -X POST http://localhost:3000/onramp/initiate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 50,
+    "description": "Démonstration OnRamp"
+  }'
+```
+
+**Réponse attendue :**
+```json
+{
+  "success": true,
+  "message": "Transaction OnRamp initiée avec succès",
+  "data": {
+    "transactionId": "onramp_1756481142625_lpblwy6tm",
+    "paymentIntentId": "pi_3S1UzaQpXOz7fYPX117CK0n9",
+    "clientSecret": "pi_3S1UzaQpXOz7fYPX117CK0n9_secret_...",
+    "amount": 50,
+    "currency": "EUR",
+    "status": "payment_pending"
+  }
+}
+```
+
+#### 2. Simuler le paiement Stripe
+```bash
+curl -X POST http://localhost:3000/payment/confirm/pi_3S1UzaQpXOz7fYPX117CK0n9
+```
+
+#### 3. Traiter la conversion crypto
+```bash
+curl -X POST http://localhost:3000/onramp/process-payment/pi_3S1UzaQpXOz7fYPX117CK0n9
+```
+
+#### 4. Vérifier le statut final
+```bash
+curl -X GET http://localhost:3000/onramp/status/onramp_1756481142625_lpblwy6tm
+```
+
+**Réponse finale attendue :**
+```json
+{
+  "success": true,
+  "message": "Statut récupéré avec succès",
+  "data": {
+    "transactionId": "onramp_1756481142625_lpblwy6tm",
+    "status": "completed",
+    "currentPhase": "completed",
+    "amount": 50,
+    "currency": "EUR",
+    "targetAmount": 46,
+    "walletAddress": "0x2B480c63bDe7C764cadBaA8b181405D770728128",
+    "progress": {
+      "step": 9,
+      "percentage": 100
+    },
+    "statusHistory": [...]
+  }
+}
+```
+
+## 🔐 Sécurité
+
+### Clés API
+- Les clés Stripe et Bridge ne sont jamais exposées côté client
+- Validation stricte des montants et formats
+- Gestion robuste des erreurs sans exposition d'informations sensibles
+
+### Validation
+- Schémas Joi pour toutes les entrées utilisateur
+- Validation des montants (min: 1€, max: 50,000€)
+- Validation des formats d'adresses Ethereum
+
+## 🛠️ Tests et Validation
+
+### Tests des cas d'erreur
+```bash
+# Montant invalide
+curl -X POST http://localhost:3000/onramp/initiate \
+  -H "Content-Type: application/json" \
+  -d '{"amount": 0}'
+
+# Montant trop élevé
+curl -X POST http://localhost:3000/onramp/initiate \
+  -H "Content-Type: application/json" \
+  -d '{"amount": 100000}'
+```
+
+### Codes d'erreur
+- `400` : Validation échouée ou données invalides
+- `404` : Ressource introuvable
+- `500` : Erreur serveur interne
+
+## 📊 Monitoring et Logs
+
+Le système inclut des logs détaillés pour chaque étape :
+- Création des Payment Intents Stripe
+- Appels API Bridge
+- Transitions de statuts
+- Erreurs et exceptions
+
+## 🔧 Architecture Technique
+
+### Structure du Code
+```
+src/
+├── controllers/     # Endpoints REST
+├── services/        # Logique métier
+├── types/          # Interfaces TypeScript
+├── enums/          # Énumérations de statuts
+├── schemas/        # Validation Joi
+├── constants/      # Configuration
+└── filters/        # Gestion d'erreurs globale
+```
+
+### Extensibilité
+Pour ajouter un nouveau provider :
+1. Implémenter l'interface correspondante
+2. Créer le service avec les mêmes méthodes
+3. Injecter via le système de DI de NestJS
+
+## 📝 License
+
+Ce projet est développé dans le cadre d'un test technique et démontre les meilleures pratiques de développement d'API avec NestJS, TypeScript et intégrations tierces.

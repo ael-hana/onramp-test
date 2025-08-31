@@ -1,81 +1,87 @@
-import {
-  OnRampStatus,
-  OnRampPhase,
-  OnRampErrorCode,
-} from '../enums/onramp.enums';
+import { OnRampStatus, OnRampPhase } from '../enums/onramp.enums';
 
 // Interface pour créer une transaction OnRamp
 export interface CreateOnRampDto {
-  readonly amount: number;
-  readonly currency?: string;
-  readonly walletAddress: string;
-  readonly description?: string;
-}
-
-// Interface pour une transaction OnRamp complète
-export interface OnRampTransaction {
-  readonly id: string;
-  readonly amount: number;
-  readonly currency: string;
-  readonly walletAddress: string;
-  readonly status: OnRampStatus;
-  readonly currentPhase: OnRampPhase;
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
-
-  // IDs des transactions techniques
-  readonly stripePaymentIntentId?: string;
-  readonly bridgeTransactionId?: string;
-
-  // Historique des statuts
-  readonly statusHistory: OnRampStatusHistoryItem[];
+  amount: number;
+  currency?: string;
+  description?: string;
 }
 
 // Interface pour l'historique des statuts
 export interface OnRampStatusHistoryItem {
-  readonly status: OnRampStatus;
-  readonly phase: OnRampPhase;
-  readonly timestamp: Date;
-  readonly details?: string;
+  status: OnRampStatus;
+  phase: OnRampPhase;
+  timestamp: string;
+  message?: string;
+}
+
+// Interface pour une transaction OnRamp complète
+export interface OnRampTransaction {
+  id: string;
+  amount: number;
+  currency: string;
+  walletAddress: string;
+  status: OnRampStatus;
+  currentPhase: OnRampPhase;
+  createdAt: string;
+  updatedAt: string;
+
+  // IDs des transactions techniques
+  stripePaymentIntentId?: string;
+  bridgeTransactionId?: string;
+
+  // Données de conversion
+  exchangeRate?: number;
+  targetAmount?: number;
+  transactionHash?: string;
+
+  // Historique des statuts
+  statusHistory: OnRampStatusHistoryItem[];
 }
 
 // Interface pour la réponse d'initialisation OnRamp
 export interface OnRampInitiationResponse {
-  readonly transactionId: string;
-  readonly status: OnRampStatus;
-  readonly currentPhase: OnRampPhase;
-  readonly paymentDetails: {
-    readonly paymentIntentId: string;
-    readonly clientSecret: string;
-    readonly amount: number;
-    readonly currency: string;
+  success: boolean;
+  message: string;
+  data: {
+    transactionId: string;
+    paymentIntentId: string;
+    clientSecret: string;
+    amount: number;
+    currency: string;
+    status: OnRampStatus;
+    progress: {
+      step: number;
+      percentage: number;
+    };
   };
-  readonly createdAt: Date;
 }
 
 // Interface pour la réponse de statut OnRamp
 export interface OnRampStatusResponse {
-  readonly transactionId: string;
-  readonly status: OnRampStatus;
-  readonly currentPhase: OnRampPhase;
-  readonly progress: {
-    readonly completedSteps: number;
-    readonly totalSteps: number;
-    readonly percentage: number;
+  success: boolean;
+  message: string;
+  data: {
+    transactionId: string;
+    status: OnRampStatus;
+    currentPhase: OnRampPhase;
+    amount: number;
+    currency: string;
+    targetAmount?: number;
+    walletAddress: string;
+    progress: {
+      step: number;
+      percentage: number;
+    };
+    statusHistory: OnRampStatusHistoryItem[];
+    updatedAt: string;
   };
-  readonly details: {
-    readonly amount: number;
-    readonly currency: string;
-    readonly walletAddress: string;
-  };
-  readonly statusHistory: OnRampStatusHistoryItem[];
-  readonly updatedAt: Date;
 }
 
 // Interface pour les erreurs OnRamp
 export interface OnRampError {
-  readonly code: OnRampErrorCode;
-  readonly message: string;
-  readonly details?: string;
-  readonly phase?: OnRampPhase;
+  code: string;
+  message: string;
+  details?: unknown;
+  statusCode?: number;
 }

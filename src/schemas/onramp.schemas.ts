@@ -17,22 +17,12 @@ export const createOnRampSchema = Joi.object({
     }),
 
   currency: Joi.string()
-    .valid(ONRAMP_CONFIG.DEFAULT_CURRENCY)
+    .valid(ONRAMP_CONFIG.SOURCE_CURRENCY)
     .optional()
-    .default(ONRAMP_CONFIG.DEFAULT_CURRENCY)
+    .default(ONRAMP_CONFIG.SOURCE_CURRENCY)
     .messages({
       'string.base': 'La devise doit être une chaîne de caractères',
-      'any.only': `Seule la devise ${ONRAMP_CONFIG.DEFAULT_CURRENCY} est acceptée`,
-    }),
-
-  walletAddress: Joi.string()
-    .pattern(/^0x[a-fA-F0-9]{40}$/)
-    .required()
-    .messages({
-      'string.base': "L'adresse wallet doit être une chaîne de caractères",
-      'string.pattern.base':
-        "Format d'adresse wallet invalide (doit être au format Ethereum 0x...)",
-      'any.required': "L'adresse wallet est obligatoire",
+      'any.only': `Seule la devise ${ONRAMP_CONFIG.SOURCE_CURRENCY} est acceptée`,
     }),
 
   description: Joi.string().max(500).optional().messages({
@@ -44,7 +34,7 @@ export const createOnRampSchema = Joi.object({
 // Schema pour valider un ID de transaction OnRamp
 export const onRampIdSchema = Joi.object({
   transactionId: Joi.string()
-    .pattern(/^onramp_[0-9]+_[a-zA-Z0-9]{8}$/)
+    .pattern(/^onramp_[0-9]+_[a-zA-Z0-9]{9}$/)
     .required()
     .messages({
       'string.base': "L'ID de transaction doit être une chaîne de caractères",
